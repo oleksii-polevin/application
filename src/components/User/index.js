@@ -19,4 +19,4 @@ async function findAll(req, res, next) {
 
 module.exports = {
     findAll
-}
+};

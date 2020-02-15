@@ -9,6 +9,6 @@ module.exports = {
      * @returns Promise<UserModel[]>
      */
     async findAll() {
-        return await UserModel.find({});
+        return UserModel.find({}); // await???
     }
 };
