@@ -5,6 +5,10 @@ const UserSchema = new Schema({
     email: {
         type: String,
         trim: true
+    },
+    fullName: {
+        type: String,
+        trim: true
     }
 }, {
     collection: 'usermodel',

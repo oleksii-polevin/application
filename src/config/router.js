@@ -11,7 +11,7 @@ module.exports = {
      */
     init(app) {
         const router = express.Router();
-
+    
         /**
          * Forwards any requests to the /v1/users URI to UserRouter.
          * @name /v1/users
