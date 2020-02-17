@@ -20,7 +20,11 @@ async function findUser(req, res, next) {
     let { email } = req.query;
     try {
         const user = await UserService.findUser({ email });
-        res.status(200).json(user);
+        if (user.length > 0) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).send(`user ${email} not found`);
+        }
     } catch (error) {
         next(error);
     }
@@ -32,7 +36,8 @@ async function createUser(req, res, next) {
         const search = await UserService.findUser({ email: req.body.email });
         if (search.length === 0) {
             const result = await UserService.createUser(user);
-            res.status(200).send(`created: ${result}`);
+
+            res.status(201).send(`created: ${result}`);
         } else {
             res.send(`email ${req.body.email} has taken, choose another one`);
         }
@@ -46,9 +51,9 @@ async function deleteUser(req, res, next) {
     try {
         const result = await UserService.deleteUser(email);
         if (result) {
-            res.send(` deleted: ${result}`);
+            res.status(200).send(`deleted: ${result}`);
         } else {
-            res.send('undefined user');
+            res.status(200).send('undefined user');
         }
     } catch (error) {
         next(error);
@@ -62,7 +67,7 @@ async function updateUser(req, res, next) {
         if (result) {
             res.status(200).send(`updated: ${result}`);
         } else {
-            res.status(200).send(`can not find user ${newUserData.email}`);
+            res.status(404).send(`can not find user ${newUserData.email}`);
         }
     } catch (error) {
         next(error);

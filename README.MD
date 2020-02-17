@@ -22,11 +22,12 @@
     }'
 ```
 
-### Update User
+### Update User ### request modified - email added
 ```
     curl --location --request PUT 'localhost:3000/v1/users/update' \
     --header 'Content-Type: application/json' \
     --data-raw '{
+        "email": "test@gmail.com",
         "fullName": "Update User"
     }'
 ```

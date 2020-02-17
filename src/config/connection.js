@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('useFindAndModify', false);
 
 const MONGODB_URI = 'mongodb://localhost:27017/';
 const MONGODB_DB_MAIN = 'users_db';
