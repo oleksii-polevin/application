@@ -7,6 +7,8 @@ module.exports = {
      * @method findUser
      * @param {}
      * @param email user email
+     * @param user user data (email and full name)
+     * @param newUserData updated user data (email - key for fullName update)
      * @summary get list of all users
      * @returns Promise<UserModel[]>
      */
@@ -20,7 +22,7 @@ module.exports = {
 
     async createUser(user) {
         const newUser = new UserModel(user);
-        await newUser.save(user);
+        return await newUser.save(user);
     },
 
     async deleteUser(email) {
