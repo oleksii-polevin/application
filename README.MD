@@ -3,7 +3,7 @@
     https://hapi.dev/family/joi/
 ```
 
-### Find User
+### Find User ### modified ###
 ```
     curl --location --request GET 'localhost:3000/v1/users/find?email=test@gmail.com' \
     --header 'Content-Type: application/json' \
