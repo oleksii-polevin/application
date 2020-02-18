@@ -5,9 +5,10 @@
     "keywords": [
         "lesson2"
     ],
-    "author": "Checha Valerii <chechavalera@gmail.com>",
+    "author": "Oleksii Polevin <pololex327@gmail.com>",
     "scripts": {},
     "dependencies": {
+        "@hapi/joi": "17.1.0",
         "body-parser": "1.18.2",
         "compression": "1.7.1",
         "cookie-parser": "1.4.3",
@@ -23,8 +24,7 @@
     },
     "config": {
         "commitizen": {
-      "path": "cz-conventional-changelog"
+            "path": "cz-conventional-changelog"
         }
     }
 }
-

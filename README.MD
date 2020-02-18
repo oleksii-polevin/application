@@ -5,11 +5,8 @@
 
 ### Find User
 ```
-    curl --location --request GET 'localhost:3000/v1/users/find' \
+    curl --location --request GET 'localhost:3000/v1/users/find?email=test@gmail.com' \
     --header 'Content-Type: application/json' \
-    --data-raw '{
-        "email": "test@gmail.com"
-    }'
 ```
 
 ### Create User
@@ -22,7 +19,7 @@
     }'
 ```
 
-### Update User ### request modified - email added
+### Update User ### modified ###
 ```
     curl --location --request PUT 'localhost:3000/v1/users/update' \
     --header 'Content-Type: application/json' \
@@ -39,4 +36,10 @@
     --data-raw '{
         "email": "test@gmail.com"
     }'
+```
+### Application modification
+```
+   - Mongoose model: added field fullName
+   - Update User method: added field email which used as a key for updating user's full name
+   - Find user method: used query params insted of --data-raw...
 ```

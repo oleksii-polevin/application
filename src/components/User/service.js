@@ -4,34 +4,62 @@ module.exports = {
     /**
      * @exports
      * @method findAll
-     * @method findUser
      * @param {}
-     * @param email user email
-     * @param user user data (email and full name)
-     * @param newUserData updated user data (email - key for fullName update)
      * @summary get list of all users
      * @returns Promise<UserModel[]>
      */
     async findAll() {
-        return await UserModel.find({});
+        const result = await UserModel.find({});
+        return result;
     },
-
+    /**
+     * @exports
+     * @method findUser
+     * @param email user email
+     * @summary get data of selected user
+     * @returns Promise<UserModel[]>
+     */
     async findUser(email) {
-        return await UserModel.find(email);
+        const result = await UserModel.find(email);
+        return result;
     },
 
+    /**
+     * @exports
+     * @method createUser
+     * @param user user data (email and full name)
+     * @summary creates new user with provided data
+     * @returns Promise<UserModel[]>
+     */
     async createUser(user) {
         const newUser = new UserModel(user);
-        return await newUser.save(user);
+        const result = await newUser.save(user);
+        return result;
     },
 
+    /**
+     * @exports
+     * @method deleteUser
+     * @param email user email
+     * @summary deletes selected user
+     * @returns Promise<UserModel[]>
+     */
     async deleteUser(email) {
-        return await UserModel.findOneAndDelete(email);
+        const result = await UserModel.findOneAndDelete(email);
+        return result;
     },
 
+    /**
+     * @exports
+     * @method updateUser
+     * @param newUserData updated user's data (email and new full name)
+     * @summary updates user's full name
+     * @returns Promise<UserModel[]>
+     */
     async updateUser(newUserData) {
         const filter = { email: newUserData.email };
         const update = { fullName: newUserData.fullName };
-        return await UserModel.findOneAndUpdate(filter, update, { new: true });
+        const result = await UserModel.findOneAndUpdate(filter, update, { new: true });
+        return result;
     }
 };
