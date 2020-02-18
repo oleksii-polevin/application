@@ -105,17 +105,17 @@ async function deleteUser(req, res, next) {
  * @returns {Promise < void >} updated user's data or error message
  */
 async function updateUser(req, res, next) {
-    let newUserData = req.body;
+    let newFullName = req.body;
     try {
-        const validation = await UserValidation.fullValidation(newUserData);
+        const validation = await UserValidation.fullValidation(newFullName);
         if (validation.error) {
             res.status(422).send(validation.error.message);
         } else {
-            const result = await UserService.updateUser(newUserData);
+            const result = await UserService.updateUser(newFullName);
             if (result) {
                 res.status(200).send(`updated: ${result}`);
             } else {
-                res.status(404).send(`can not find user ${newUserData.email}`);
+                res.status(404).send(`can not find user ${newFullName.email}`);
             }
         }
     } catch (error) {

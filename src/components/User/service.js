@@ -52,13 +52,13 @@ module.exports = {
     /**
      * @exports
      * @method updateUser
-     * @param newUserData updated user's data (email and new full name)
+     * @param newName updated user's data (email(used as key) and new full name)
      * @summary updates user's full name
      * @returns Promise<UserModel[]>
      */
-    async updateUser(newUserData) {
-        const filter = { email: newUserData.email };
-        const update = { fullName: newUserData.fullName };
+    async updateUser(newName) {
+        const filter = { email: newName.email };
+        const update = { fullName: newName.fullName };
         const result = await UserModel.findOneAndUpdate(filter, update, { new: true });
         return result;
     }
