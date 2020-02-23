@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-mongoose.set('useFindAndModify', false);
 
 const MONGODB_URI = 'mongodb://localhost:27017/';
 const MONGODB_DB_MAIN = 'users_db';
@@ -12,10 +11,10 @@ const connectOptions = {
     // for reconnectTries times
     reconnectTries: Number.MAX_VALUE,
     reconnectInterval: 1000,
-    // flag to allow users to fall back to the old 
+    // flag to allow users to fall back to the old
     // parser if they find a bug in the new parse
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
 };
 
 module.exports = mongoose.createConnection(MONGO_URI, connectOptions);

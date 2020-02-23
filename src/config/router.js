@@ -11,7 +11,7 @@ module.exports = {
      */
     init(app) {
         const router = express.Router();
-    
+
         /**
          * Forwards any requests to the /v1/users URI to UserRouter.
          * @name /v1/users
@@ -28,7 +28,7 @@ module.exports = {
          * @inner
          * @param {callback} middleware - Express middleware.
          */
-        app.use((req, res, next) => {
+        app.use((req, res) => {
             res.status(404).send(http.STATUS_CODES[404]);
         });
 
@@ -38,5 +38,5 @@ module.exports = {
          * @param {express.Router}
          */
         app.use(router);
-    }
+    },
 };

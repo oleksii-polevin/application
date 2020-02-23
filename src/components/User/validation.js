@@ -1,41 +1,74 @@
-const Joi = require('@hapi/joi');
+const Validation = require('../validation');
 
 /**
- * Joi schema for email validation
- * @type {Joi.object}
- * @const
+ * @exports
+ * @class
+ * @extends Validation
  */
-const emailSchema = Joi.string().email();
+class UserValidation extends Validation {
+    /**
+     * @param {String} data.id - objectId
+     * @returns
+     * @memberof UserValidation
+     */
+    findById(data) {
+        return this.Joi
+            .object({
+                id: this.Joi.objectId(),
+            })
+            .validate(data);
+    }
 
-/**
- * Joi schema for user validation
- * @type {Joi.object}
- * @const
- */
-const fullSchema = Joi.object({
-    email: Joi.string().email(),
-    fullName: Joi.string().pattern(new RegExp(/\w{2,20}\s\w{2,20}/))
-});
+    /**
+     * @param {String} profile.email
+     * @param {String} profile.fullName
+     * @returns
+     * @memberof UserValidation
+     */
+    create(profile) {
+        return this.Joi
+            .object({
+                email: this.Joi.string().email(),
+                fullName: this.Joi
+                    .string()
+                    .min(1)
+                    .max(30)
+                    .required(),
+            })
+            .validate(profile);
+    }
 
-/**
- * @function
- * @param {object} user - Json object with user email and full name
- * @returns user validation result
- */
-const fullValidation = (user) => {
-    return fullSchema.validate(user);
-};
+    /**
+     * @param {String} data.id - objectId
+     * @param {String} data.fullName
+     * @returns
+     * @memberof UserValidation
+     */
+    updateById(data) {
+        return this.Joi
+            .object({
+                id: this.Joi.objectId(),
+                fullName: this.Joi
+                    .string()
+                    .min(1)
+                    .max(30)
+                    .required(),
+            })
+            .validate(data);
+    }
 
-/**
- * @function
- * @param {string} email - User email
- * @returns email validation result
- */
-const emailValidation = (email) => {
-    return emailSchema.validate(email);
-};
+    /**
+     * @param {String} data.id - objectId
+     * @returns
+     * @memberof UserValidation
+     */
+    deleteById(data) {
+        return this.Joi
+            .object({
+                id: this.Joi.objectId(),
+            })
+            .validate(data);
+    }
+}
 
-module.exports = {
-    emailValidation,
-    fullValidation
-};
+module.exports = new UserValidation();

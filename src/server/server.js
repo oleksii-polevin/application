@@ -1,6 +1,9 @@
-const express = require('express')
-const middleware = require('../config/middleware')
-const routes = require('../config/router')
+require('dotenv').config({
+    path: `${process.cwd()}/src/config/.env`,
+});
+const express = require('express');
+const middleware = require('../config/middleware');
+const routes = require('../config/router');
 
 /**
  * @type {express}
@@ -22,6 +25,5 @@ routes.init(app);
  * @description sets port 3000 to default or unless otherwise specified in the environment
  */
 app.set('port', process.env.PORT || 3000);
-
 
 module.exports = app;

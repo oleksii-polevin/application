@@ -1,44 +1,27 @@
 const UserService = require('./service');
 const UserValidation = require('./validation');
+const ValidationError = require('../../error/ValidationError');
 
 /**
  * @function
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {Promise < void >} list of all users
+ * @returns {Promise < void >}
  */
 async function findAll(req, res, next) {
     try {
         const users = await UserService.findAll();
 
-        res.status(200).json(users);
+        res.status(200).json({
+            data: users,
+        });
     } catch (error) {
-        next(error);
-    }
-}
-/**
- * @function
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
- * @returns {Promise < void >} selected user data
- */
-async function findUser(req, res, next) {
-    let { email } = req.query;
-    try {
-        const validation = await UserValidation.emailValidation(email);
-        if (validation.error) {
-            res.status(422).send(validation.error.message);
-        } else {
-            const user = await UserService.findUser({ email });
-            if (user.length > 0) {
-                res.status(200).json(user);
-            } else {
-                res.status(404).send(`user ${email} not found`);
-            }
-        }
-    } catch (error) {
+        res.status(500).json({
+            error: error.message,
+            details: null,
+        });
+
         next(error);
     }
 }
@@ -48,26 +31,35 @@ async function findUser(req, res, next) {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {Promise < void >} created user's data or error message
+ * @returns {Promise < void >}
  */
-async function createUser(req, res, next) {
-    let user = req.body;
+async function findById(req, res, next) {
     try {
-        const validation = await UserValidation.fullValidation(user);
-        if (validation.error) {
-            res.status(422).send(validation.error.message);
-        } else {
-            const search = await UserService.findUser({ email: req.body.email });
-            if (search.length === 0) {
-                const result = await UserService.createUser(user);
+        const { error } = UserValidation.findById(req.params);
 
-                res.status(201).send(`created: ${result}`);
-            } else {
-                res.send(`email ${req.body.email} has taken, choose another one`);
-            }
+        if (error) {
+            throw new ValidationError(error.details);
         }
+
+        const user = await UserService.findById(req.params.id);
+
+        return res.status(200).json({
+            data: user,
+        });
     } catch (error) {
-        next(error);
+        if (error instanceof ValidationError) {
+            return res.status(422).json({
+                error: error.name,
+                details: error.message,
+            });
+        }
+
+        res.status(500).json({
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
     }
 }
 
@@ -76,24 +68,35 @@ async function createUser(req, res, next) {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {Promise < void >} deleted user's data or error message
+ * @returns {Promise < void >}
  */
-async function deleteUser(req, res, next) {
-    let email = req.body;
+async function create(req, res, next) {
     try {
-        const validation = await UserValidation.emailValidation(email.email);
-        if (validation.error) {
-            res.status(422).send(validation.error.message);
-        } else {
-            const result = await UserService.deleteUser(email);
-            if (result) {
-                res.status(200).send(`deleted: ${result}`);
-            } else {
-                res.status(200).send('undefined user');
-            }
+        const { error } = UserValidation.create(req.body);
+
+        if (error) {
+            throw new ValidationError(error.details);
         }
+
+        const user = await UserService.create(req.body);
+
+        return res.status(200).json({
+            data: user,
+        });
     } catch (error) {
-        next(error);
+        if (error instanceof ValidationError) {
+            return res.status(422).json({
+                message: error.name,
+                details: error.message,
+            });
+        }
+
+        res.status(500).json({
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
     }
 }
 
@@ -102,32 +105,79 @@ async function deleteUser(req, res, next) {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {Promise < void >} updated user's data or error message
+ * @returns {Promise<void>}
  */
-async function updateUser(req, res, next) {
-    let newFullName = req.body;
+async function updateById(req, res, next) {
     try {
-        const validation = await UserValidation.fullValidation(newFullName);
-        if (validation.error) {
-            res.status(422).send(validation.error.message);
-        } else {
-            const result = await UserService.updateUser(newFullName);
-            if (result) {
-                res.status(200).send(`updated: ${result}`);
-            } else {
-                res.status(404).send(`can not find user ${newFullName.email}`);
-            }
+        const { error } = UserValidation.updateById(req.body);
+
+        if (error) {
+            throw new ValidationError(error.details);
         }
+
+        const updatedUser = await UserService.updateById(req.body.id, req.body);
+
+        return res.status(200).json({
+            data: updatedUser,
+        });
     } catch (error) {
-        next(error);
+        if (error instanceof ValidationError) {
+            return res.status(422).json({
+                message: error.name,
+                details: error.message,
+            });
+        }
+
+        res.status(500).json({
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
     }
 }
 
+/**
+ * @function
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns {Promise<void>}
+ */
+async function deleteById(req, res, next) {
+    try {
+        const { error } = UserValidation.deleteById(req.body);
+
+        if (error) {
+            throw new ValidationError(error.details);
+        }
+
+        const deletedUser = await UserService.deleteById(req.body.id);
+
+        return res.status(200).json({
+            data: deletedUser,
+        });
+    } catch (error) {
+        if (error instanceof ValidationError) {
+            return res.status(422).json({
+                message: error.name,
+                details: error.message,
+            });
+        }
+
+        res.status(500).json({
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
+    }
+}
 
 module.exports = {
     findAll,
-    findUser,
-    createUser,
-    deleteUser,
-    updateUser
+    findById,
+    create,
+    updateById,
+    deleteById,
 };

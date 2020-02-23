@@ -1,65 +1,66 @@
 const UserModel = require('./model');
 
+/**
+ * @exports
+ * @method findAll
+ * @param {}
+ * @summary get list of all users
+ * @returns Promise<UserModel[]>
+ */
+function findAll() {
+    return UserModel.find({}).exec();
+}
+
+/**
+ * @exports
+ * @method findById
+ * @param {string} id
+ * @summary get a user
+ * @returns {Promise<UserModel>}
+ */
+function findById(id) {
+    return UserModel.findById(id).exec();
+}
+
+/**
+ * @exports
+ * @method create
+ * @param {object} profile
+ * @summary create a new user
+ * @returns {Promise<UserModel>}
+ */
+function create(profile) {
+    return UserModel.create(profile);
+}
+
+/**
+ * Find a user by id and update his profile
+ * @exports
+ * @method updateById
+ * @param {string} _id
+ * @param {object} newProfile
+ * @summary update a user's profile
+ * @returns {Promise<void>}
+ */
+function updateById(_id, newProfile) {
+    return UserModel.updateOne({ _id }, newProfile).exec();
+}
+
+/**
+ * @exports
+ * @method deleteById
+ * @param {string} _id
+ * @summary delete a user from database
+ * @returns {Promise<void>}
+ */
+function deleteById(_id) {
+    return UserModel.deleteOne({ _id }).exec();
+}
+
 module.exports = {
-    /**
-     * @exports
-     * @method findAll
-     * @param {}
-     * @summary get list of all users
-     * @returns Promise<UserModel[]>
-     */
-    async findAll() {
-        const result = await UserModel.find({});
-        return result;
-    },
-    /**
-     * @exports
-     * @method findUser
-     * @param email user email
-     * @summary get data of selected user
-     * @returns Promise<UserModel[]>
-     */
-    async findUser(email) {
-        const result = await UserModel.find(email);
-        return result;
-    },
-
-    /**
-     * @exports
-     * @method createUser
-     * @param user user data (email and full name)
-     * @summary creates new user with provided data
-     * @returns Promise<UserModel[]>
-     */
-    async createUser(user) {
-        const newUser = new UserModel(user);
-        const result = await newUser.save(user);
-        return result;
-    },
-
-    /**
-     * @exports
-     * @method deleteUser
-     * @param email user email
-     * @summary deletes selected user
-     * @returns Promise<UserModel[]>
-     */
-    async deleteUser(email) {
-        const result = await UserModel.findOneAndDelete(email);
-        return result;
-    },
-
-    /**
-     * @exports
-     * @method updateUser
-     * @param newName updated user's data (email(used as key) and new full name)
-     * @summary updates user's full name
-     * @returns Promise<UserModel[]>
-     */
-    async updateUser(newName) {
-        const filter = { email: newName.email };
-        const update = { fullName: newName.fullName };
-        const result = await UserModel.findOneAndUpdate(filter, update, { new: true });
-        return result;
-    }
+    findAll,
+    findById,
+    create,
+    updateById,
+    deleteById,
 };
