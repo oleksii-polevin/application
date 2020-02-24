@@ -29,6 +29,15 @@ router.get('/', UserComponent.findAll);
 router.get('/:id', UserComponent.findById);
 
 /**
+ * Route serving a user
+ * @name /v1/users/create
+ * @function
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
+
+/**
  * Route serving a new user
  * @name /v1/users
  * @function

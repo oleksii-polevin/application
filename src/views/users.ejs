@@ -1,0 +1,23 @@
+
+    <table class="users">
+        <tr>
+            <th>#</th>
+            <th>email</th>
+            <th></th>
+            <th>full name</th>
+            <th></th>
+        </tr>
+        <% data.forEach((item, index) => { %>
+        <tr>
+            <td><%= ++index %></td>
+            <td><%=item.email %></td>
+            <td>
+                <button class="update" name="<%= item._id%>">update</button>
+            </td>
+            <td><%=item.fullName%></td>
+            <td>
+                <button class="delete" name="<%= item._id%>">delete</button>
+            </td>
+        </tr>
+        <%  }); %>
+    </table>

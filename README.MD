@@ -23,7 +23,7 @@
    curl --location --request PUT 'localhost:3000/v1/users' \
    --header 'Content-Type: application/json' \
    --data-raw '{
-      "id": "5e50265429fbb59255fb8428",
+      "id": "5e53ecab28d5310d528f9fe9",
       "fullName": "Yay Foo"
    }'
 ```

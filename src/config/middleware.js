@@ -3,6 +3,7 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
 
 module.exports = {
     /**
@@ -40,5 +41,7 @@ module.exports = {
             );
             next();
         });
+        app.set('views', path.join(__dirname, '../', 'views'));
+        app.set('view engine', 'ejs');
     },
 };
