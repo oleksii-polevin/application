@@ -8,6 +8,10 @@ const UserComponent = require('../User');
  */
 const router = Router();
 
+router.get('/create', UserComponent.newUser);
+
+router.get('/update/:id', UserComponent.updateForm);
+
 /**
  * Route serving list of users.
  * @name /v1/users
@@ -55,7 +59,7 @@ router.post('/', UserComponent.create);
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware
  */
-router.put('/', UserComponent.updateById);
+router.post('/update', UserComponent.updateById);
 
 /**
  * Route serving a new user
@@ -65,6 +69,7 @@ router.put('/', UserComponent.updateById);
  * @param {string} path -Express path
  * @param {callback} middleware - Express middleware
  */
-router.delete('/', UserComponent.deleteById);
+router.post('/delete', UserComponent.deleteById);
+
 
 module.exports = router;

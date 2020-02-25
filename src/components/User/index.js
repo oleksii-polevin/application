@@ -108,6 +108,7 @@ async function updateById(req, res, next) {
     try {
         const { error } = UserValidation.updateById(req.body);
 
+
         if (error) {
             throw new ValidationError(error.details);
         }
@@ -167,6 +168,16 @@ async function deleteById(req, res, next) {
     }
 }
 
+function newUser(req, res) {
+    res.render('formCreateUser');
+}
+
+function updateForm(req, res) {
+    const { id } = req.params;
+
+    res.render('formUpdateUser', { userId: id });
+}
+
 
 module.exports = {
     findAll,
@@ -174,5 +185,6 @@ module.exports = {
     create,
     updateById,
     deleteById,
-
+    newUser,
+    updateForm,
 };

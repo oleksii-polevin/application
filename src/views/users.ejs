@@ -12,11 +12,14 @@
             <td><%= ++index %></td>
             <td><%=item.email %></td>
             <td>
-                <button class="update" name="<%= item._id%>">update</button>
+                <a href="/v1/users/update/<%=item._id%>">update</a>
             </td>
             <td><%=item.fullName%></td>
             <td>
-                <button class="delete" name="<%= item._id%>">delete</button>
+                <form action="/v1/users/delete" method="POST">
+                    <input type="hidden" name="id" value="<%=item._id%>">
+                    <button onclick="confirm('Are you sure?');">delete</button>
+                </form>
             </td>
         </tr>
         <%  }); %>

@@ -4,58 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <title>Document</title>
 </head>
 
 <body>
-    <%- include ('formCreateUser') %>
-    <%- include ('formUpdate') %>
+    <a href="/v1/users/create">add</a>
     <%- include ('users') %>
-
 </body>
-
-<script>
-    $('.add').click(function () {
-    $('.create').toggle();
-    $('.users').hide();
-    $('.add').hide();
-});
-
-$('.update').click(function () {
-    const elem = $(this).attr('name');
-    $('.updateUser').show();
-    $('.users').hide();
-    $('.add').hide();
-    $('.updateUser').submit(function (event) {
-        event.preventDefault();
-        const newName = $('.fullName').val();
-        $.ajax({
-            url: '/v1/users',
-            type: 'PUT',
-            data: {
-                id: elem,
-                fullName: newName,
-            },
-            success: window.location.reload(),
-        });
-    });
-});
-
-$('.delete').click(function () {
-    if (confirm('Are you sure?')) {
-        const elem = $(this).attr('name');
-        $.ajax({
-            url: '/v1/users',
-            type: 'DELETE',
-            data: {
-                id: elem,
-            },
-            success: window.location.reload(),
-        });
-    }
-});
-
-</script>
 
 </html>
