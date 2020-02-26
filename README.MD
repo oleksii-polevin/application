@@ -30,9 +30,9 @@
 
 ### Delete User
 ```
-   curl --location --request DELETE 'localhost:3000/v1/users' \
+   curl --location --request GET 'localhost:3000/v1/users' \
    --header 'Content-Type: application/json' \
    --data-raw '{
-      "id": "5e502541bb617386c48f6a8c"
+      "id": "5e5546fa1c985b25985cefc5"
    }'
 ```

@@ -15,6 +15,7 @@ async function findAll(req, res, next) {
 
         res.render('index', {
             data: users,
+            csrfToken: req.csrfToken(),
         });
     } catch (error) {
         res.status(500).send({
@@ -72,7 +73,10 @@ async function findById(req, res, next) {
  */
 async function create(req, res, next) {
     try {
-        const { error } = UserValidation.create(req.body);
+        const { error } = UserValidation.create({
+            email: req.body.email,
+            fullName: req.body.fullName,
+        });
 
         if (error) {
             throw new ValidationError(error.details);
@@ -106,7 +110,10 @@ async function create(req, res, next) {
  */
 async function updateById(req, res, next) {
     try {
-        const { error } = UserValidation.updateById(req.body);
+        const { error } = UserValidation.updateById({
+            id: req.body.id,
+            fullName: req.body.fullName,
+        });
 
 
         if (error) {
@@ -142,13 +149,13 @@ async function updateById(req, res, next) {
  */
 async function deleteById(req, res, next) {
     try {
-        const { error } = UserValidation.deleteById(req.body);
+        const { error } = UserValidation.deleteById({ id: req.body.id });
 
         if (error) {
             throw new ValidationError(error.details);
         }
 
-        await UserService.deleteById(req.body.id);
+        await UserService.deleteById({ _id: req.body.id });
 
         return res.redirect('/v1/users');
     } catch (error) {
@@ -168,14 +175,22 @@ async function deleteById(req, res, next) {
     }
 }
 
+/**
+ * @function
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
 function newUser(req, res) {
-    res.render('formCreateUser');
+    res.render('formCreateUser', { csrfToken: req.csrfToken() });
 }
 
 function updateForm(req, res) {
     const { id } = req.params;
 
-    res.render('formUpdateUser', { userId: id });
+    res.render('formUpdateUser', {
+        userId: id,
+        csrfToken: req.csrfToken(),
+    });
 }
 
 
