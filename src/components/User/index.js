@@ -18,7 +18,7 @@ async function findAll(req, res, next) {
             csrfToken: req.csrfToken(),
         });
     } catch (error) {
-        res.status(500).send({
+        res.status(500).render('500', {
             error: error.message,
             details: null,
         });
@@ -86,13 +86,13 @@ async function create(req, res, next) {
         return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
-            return res.status(422).json({
+            console.log('validation error');
+            return res.status(422).render('422', {
                 message: error.name,
-                details: error.message,
+                details: error.message[0].message,
             });
         }
-
-        res.status(500).json({
+        res.render('500', {
             message: error.name,
             details: error.message,
         });
@@ -125,13 +125,13 @@ async function updateById(req, res, next) {
         return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
-            return res.status(422).json({
+            return res.status(422).render('422', {
                 message: error.name,
-                details: error.message,
+                details: error.message[0].message,
             });
         }
 
-        res.status(500).json({
+        res.render('500', {
             message: error.name,
             details: error.message,
         });
@@ -160,9 +160,9 @@ async function deleteById(req, res, next) {
         return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
-            return res.status(422).json({
+            return res.status(422).render('422', {
                 message: error.name,
-                details: error.message,
+                details: error.message[0].message,
             });
         }
 
@@ -176,6 +176,7 @@ async function deleteById(req, res, next) {
 }
 
 /**
+ * Shows form for new user
  * @function
  * @param {express.Request} req
  * @param {express.Response} res
@@ -184,6 +185,12 @@ function newUser(req, res) {
     res.render('formCreateUser', { csrfToken: req.csrfToken() });
 }
 
+/**
+ * Shows form for user update
+ * @function
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
 function updateForm(req, res) {
     const { id } = req.params;
 

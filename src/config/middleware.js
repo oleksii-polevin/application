@@ -23,7 +23,7 @@ module.exports = {
         app.use(bodyParser.json());
         // parse Cookie header and populate req.cookies with an object keyed by the cookie names.
         app.use(cookieParser());
-        //
+        // csrf token for forms
         app.use(csrf({ cookie: true }));
         // returns the compression middleware
         app.use(compression());

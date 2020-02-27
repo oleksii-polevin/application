@@ -8,8 +8,24 @@ const UserComponent = require('../User');
  */
 const router = Router();
 
+/**
+ * Route serving new user.
+ * @name /v1/users
+ * @function
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.get('/create', UserComponent.newUser);
 
+/**
+ * Route serving user update.
+ * @name /v1/users
+ * @function
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.get('/update/:id', UserComponent.updateForm);
 
 /**
@@ -33,15 +49,6 @@ router.get('/', UserComponent.findAll);
 router.get('/:id', UserComponent.findById);
 
 /**
- * Route serving a user
- * @name /v1/users/create
- * @function
- * @inner
- * @param {string} path - Express path
- * @param {callback} middleware - Express middleware.
- */
-
-/**
  * Route serving a new user
  * @name /v1/users
  * @function
@@ -62,7 +69,7 @@ router.post('/', UserComponent.create);
 router.post('/update', UserComponent.updateById);
 
 /**
- * Route serving a new user
+ * Route serving user
  * @name /v1/users
  * @function
  * @inner
