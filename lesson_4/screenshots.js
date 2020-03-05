@@ -50,10 +50,9 @@ const createLinkAndSaveToDatabase = () => {
         parameters: {
             path: `/${filename}`,
         },
-    }, (err, result) => {
-        if (err) {
-            console.error(err);
-            process.exit(1);
+    }, (error, result) => {
+        if (error) {
+            throw error;
         }
         screeshotLink.create({
             link: result.url,
@@ -73,10 +72,9 @@ function uploadFile() {
             path: `/${filename}`,
         },
         readStream: fs.createReadStream('temp.png'),
-    }, (err) => {
-        if (err) {
-            console.error(err);
-            process.exit(1);
+    }, (error) => {
+        if (error) {
+            throw error;
         }
         createLinkAndSaveToDatabase();
     });
