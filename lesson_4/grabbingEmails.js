@@ -38,4 +38,5 @@ const readableDate = new Date().toLocaleString();
         date: readableDate,
     });
     await browser.close();
+    connections.close();
 })();

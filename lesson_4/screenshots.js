@@ -92,4 +92,5 @@ function uploadFile() {
     await browser.close();
 })().then(() => {
     uploadFile();
+    connections.close();
 });
