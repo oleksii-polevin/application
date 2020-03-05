@@ -9,7 +9,7 @@ const token = 'PASTE_YOUR_TOKEN_HERE';
 const db = 'Screenshots';
 const connections = require('./connection')(db);
 
-const webAddress = 'http://localhost:3000/v1/users';
+const WEB_ADDERSS = 'http://localhost:3000/v1/users';
 
 // unique filename for dropbox
 const filename = `${Date.now().toString()}.png`;
@@ -87,7 +87,7 @@ function uploadFile() {
 (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(webAddress);
+    await page.goto(WEB_ADDERSS);
     await page.screenshot({ path: 'temp.png' });
     await browser.close();
 })().then(() => {
