@@ -1,5 +1,5 @@
 const { Schema } = require('mongoose');
-const connections = require('../../config/connection');
+const connections = require('../../config/connection')('users_db');
 
 const UserSchema = new Schema(
     {

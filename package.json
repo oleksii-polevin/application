@@ -3,13 +3,15 @@
     "version": "0.0.1",
     "main": "./src/server/index.js",
     "keywords": [
-        "lesson2"
+        "lesson4"
     ],
-    "author": "Pavel Pavlov <igrokqq1991@ukr.net>",
+    "author": "",
     "scripts": {
         "format": "prettier --config=.prettierrc.json --write '**/*.js' && eslint --fix '**/*.js'",
         "commit": "git-cz",
-        "start": "node src/server/index.js"
+        "start": "node src/server/index.js",
+        "emails": "node lesson_4/grabbingEmails.js",
+        "screenshots": "node lesson_4/screenshots.js"
     },
     "husky": {
         "hooks": {
@@ -24,11 +26,14 @@
         "cors": "2.8.5",
         "csurf": "1.11.0",
         "dotenv": "8.2.0",
+        "dropbox-v2-api": "2.4.12",
         "ejs": "3.0.1",
         "eslint-config-airbnb": "18.0.1",
         "express": "4.16.2",
+        "fs": "0.0.1-security",
         "helmet": "3.9.0",
-        "mongoose": "5.7.5"
+        "mongoose": "5.7.5",
+        "puppeteer": "2.1.1"
     },
     "devDependencies": {
         "cz-conventional-changelog": "3.1.0",

@@ -10,7 +10,7 @@
         <% data.forEach((item, index) => { %>
         <tr>
             <td><%= ++index %></td>
-            <td><%=item.email %></td>
+            <td class="email"><%=item.email %></td>
             <td>
                 <a href="/v1/users/update/<%=item._id%>">update</a>
             </td>

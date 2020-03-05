@@ -1,6 +1,14 @@
-### Task
+### Task_1
 ```
-   https://drive.google.com/drive/folders/1yQd6eFhnbPAmuuFqaMJYszNBMXwpNtfx?usp=sharing
+npm run emails
+```
+### Task_2
+```
+- create dropbox app on official site
+- generate access token
+- paste token into variable token in lesson_4/screenshots.js
+
+npm run screenshots
 ```
 
 ### Find User
