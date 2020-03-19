@@ -28,6 +28,9 @@ router.get('/create', UserComponent.newUser);
  */
 router.get('/update/:id', UserComponent.updateForm);
 
+
+router.post('/signIn', UserComponent.findUser);
+
 /**
  * Route serving list of users.
  * @name /v1/users
@@ -46,7 +49,7 @@ router.get('/', UserComponent.findAll);
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware.
  */
-router.get('/:id', UserComponent.findById);
+router.get('/login', UserComponent.findById);
 
 /**
  * Route serving a new user

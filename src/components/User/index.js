@@ -1,6 +1,8 @@
 const UserService = require('./service');
 const UserValidation = require('./validation');
 const ValidationError = require('../../error/ValidationError');
+const UserAuth = require('../Auth/auth.js');
+
 
 /**
  * @function
@@ -27,6 +29,42 @@ async function findAll(req, res, next) {
     }
 }
 
+async function findUser(req, res, next) {
+    try {
+        // the same validation scheme as used for creation
+        const { error } = UserValidation.create({
+            email: req.body.email,
+            fullName: req.body.fullName,
+        });
+
+        if (error) {
+            throw new ValidationError(error.details);
+        }
+
+        const result = await UserService.findByEmail(req.body.email);
+        const token = await UserAuth.getToken(result.id, req.body.email);
+        return res.json({
+            accessToken: token.accessToken,
+            refreshToken: token.refreshToken,
+        });
+        // return res.redirect('/v1/users');
+    } catch (error) {
+        if (error instanceof ValidationError) {
+            console.log('validation error');
+            return res.status(422).render('422', {
+                message: error.name,
+                details: error.message[0].message,
+            });
+        }
+        res.render('500', {
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
+    }
+}
+
 /**
  * @function
  * @param {express.Request} req
@@ -35,14 +73,19 @@ async function findAll(req, res, next) {
  * @returns {Promise < void >}
  */
 async function findById(req, res, next) {
+    const token = req.headers['x-access-token'] || req.headers.authorization;
+    const result = UserAuth.verifyUser(token);
+    if (typeof result.userId === 'undefined') {
+        res.status(401).json({ error: result.error });
+    }
     try {
-        const { error } = UserValidation.findById(req.params);
+        const { error } = UserValidation.findById({ id: result.userId });
 
         if (error) {
-            throw new ValidationError(error.details);
+            throw new ValidationError(error);
         }
 
-        const user = await UserService.findById(req.params.id);
+        const user = await UserService.findById(result.userId);
 
         return res.status(200).json({
             data: user,
@@ -59,7 +102,6 @@ async function findById(req, res, next) {
             message: error.name,
             details: error.message,
         });
-
         return next(error);
     }
 }
@@ -82,8 +124,14 @@ async function create(req, res, next) {
             throw new ValidationError(error.details);
         }
 
-        await UserService.create(req.body);
-        return res.redirect('/v1/users');
+        const result = await UserService.create(req.body);
+        const token = await UserAuth.getToken(result.id, req.body.email);
+
+        return res.json({
+            accessToken: token.accessToken,
+            refreshToken: token.refreshToken,
+        });
+        // return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
             console.log('validation error');
@@ -109,18 +157,23 @@ async function create(req, res, next) {
  * @returns {Promise<void>}
  */
 async function updateById(req, res, next) {
+    const token = req.headers['x-access-token'] || req.headers.authorization || req.body.accessToken;
+    const result = UserAuth.verifyUser(token);
+    if (typeof result.userId === 'undefined') {
+        res.status(401).json({ error: result.error });
+    }
     try {
         const { error } = UserValidation.updateById({
-            id: req.body.id,
+            id: result.userId,
             fullName: req.body.fullName,
         });
-
 
         if (error) {
             throw new ValidationError(error.details);
         }
 
-        await UserService.updateById(req.body.id, req.body);
+        await UserService.updateById(result.userId, { fullName: req.body.fullName });
+
 
         return res.redirect('/v1/users');
     } catch (error) {
@@ -156,7 +209,7 @@ async function deleteById(req, res, next) {
         }
 
         await UserService.deleteById({ _id: req.body.id });
-
+        await UserAuth.deleteUser(req.body.id);
         return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
@@ -191,12 +244,19 @@ function newUser(req, res) {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-function updateForm(req, res) {
+async function updateForm(req, res) {
     const { id } = req.params;
+    let token;
+    try {
+        token = await UserAuth.findToken(id);
+    } catch (error) {
+        console.error(error);
+    }
 
     res.render('formUpdateUser', {
         userId: id,
         csrfToken: req.csrfToken(),
+        accessToken: token.accessToken,
     });
 }
 
@@ -209,4 +269,5 @@ module.exports = {
     deleteById,
     newUser,
     updateForm,
+    findUser,
 };

@@ -22,6 +22,10 @@ function findById(id) {
     return UserModel.findById(id).exec();
 }
 
+function findByEmail(email) {
+    return UserModel.find({ email });
+}
+
 /**
  * @exports
  * @method create
@@ -43,6 +47,7 @@ function create(profile) {
  * @returns {Promise<void>}
  */
 function updateById(_id, newProfile) {
+    console.log(newProfile);
     return UserModel.updateOne({ _id }, newProfile).exec();
 }
 
@@ -63,4 +68,5 @@ module.exports = {
     create,
     updateById,
     deleteById,
+    findByEmail,
 };
