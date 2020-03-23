@@ -43,7 +43,7 @@ async function getToken(userId, newUser = true) {
 }
 
 /**
- * obtain information from jwt token
+ * Obtain information from jwt token
  * @function
  * @param {String} token Json web token
  */
@@ -63,11 +63,22 @@ function verifyUser(token) {
     };
 }
 
+/**
+ * Obtaining refresh token by user's id
+ * @function
+ * @param {String} userId User's id
+ */
 async function findToken(userId) {
     const refresh = await JwtServices.findToken(userId);
     return refresh;
 }
 
+/**
+ * Update user's tokens
+ * @param {Express.request} req
+ * @param {Express.response} res
+ * @param {Express.NextFunction} next
+ */
 async function updateToken(req, res, next) {
     try {
         const token = req.headers.authorization;
@@ -97,6 +108,12 @@ async function updateToken(req, res, next) {
     }
 }
 
+/**
+ * Delete user's tokens
+ * @param {Express.request} req
+ * @param {Express.response} res
+ * @param {Express.NextFunction} next
+ */
 async function deleteToken(req, res, next) {
     try {
         const token = req.headers.authorization;
@@ -114,6 +131,10 @@ async function deleteToken(req, res, next) {
     }
 }
 
+/**
+ * Delete user from database
+ * @param {String} userId
+ */
 async function deleteUser(userId) {
     const result = await JwtServices.deleteById(userId);
     return result;
