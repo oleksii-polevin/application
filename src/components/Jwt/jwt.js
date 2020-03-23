@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const AuthService = require('./service');
+const JwtServices = require('./service');
 
 /**
  * Creates jwt tokens for users
@@ -8,10 +8,9 @@ const AuthService = require('./service');
  * @param {String} userId User's _id from users database
  * @param {String} email  User's email
  */
-function createTokens(userId, email) {
+function createTokens(userId) {
     const accessToken = jwt.sign({
         userId,
-        email,
     }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRE });
     const refreshToken = jwt.sign({
         userId,
@@ -23,45 +22,31 @@ function createTokens(userId, email) {
 }
 /**
  * Obtain new tokens
- * @param {*} userId
- * @param {*} email
- * @param {*} newUser
+ * @param {String} userId
+ * @param {String} email
+ *@param {Boolean} newUser
  */
-async function getToken(userId, email) {
-    let result;
+async function getToken(userId, newUser = true) {
+    const { accessToken, refreshToken } = createTokens(userId);
     try {
-        const { accessToken, refreshToken } = createTokens(userId, email);
-        result = await AuthService.create({
-            userId, email, accessToken, refreshToken,
-        });
+        if (newUser) { // creating new db document
+            await JwtServices.create({
+                userId, refreshToken,
+            });
+        } else { // updating db document
+            await JwtServices.updateById(userId, { refreshToken });
+        }
     } catch (error) {
         return error;
     }
-    return result;
+    return { accessToken, refreshToken };
 }
 
-async function getNewToken(req, res, next) {
-    let result;
-    try {
-        const { email } = req.params;
-        const search = await AuthService.findByEmail(email);
-        if (search === null) {
-            throw new Error('user not found');
-        }
-        const { userId } = search;
-        const { accessToken, refreshToken } = createTokens(userId, email);
-        await AuthService.updateById(userId, { accessToken, refreshToken });
-        result = { accessToken, refreshToken };
-        return res.status(200).json(result);
-    } catch (error) {
-        res.status(401).json({
-            message: error.name,
-            details: error.message,
-        });
-        return next(error);
-    }
-}
-
+/**
+ * obtain information from jwt token
+ * @function
+ * @param {String} token Json web token
+ */
 function verifyUser(token) {
     let error;
     let userId;
@@ -78,30 +63,30 @@ function verifyUser(token) {
     };
 }
 
-// just for testing purposes
 async function findToken(userId) {
-    const access = await AuthService.findToken(userId);
-    return access;
+    const refresh = await JwtServices.findToken(userId);
+    return refresh;
 }
 
 async function updateToken(req, res, next) {
     try {
         const token = req.headers.authorization;
 
-        const { error, userId, email } = verifyUser(token);
+        const { error, userId } = verifyUser(token);
         if (error) throw error;
 
         const dbRefreshToken = await findToken(userId);
-        if (dbRefreshToken.refreshToken !== token && dbRefreshToken.refreshToken !== 'null') {
-            return res.status(401).json({
+        console.log(dbRefreshToken);
+        console.log(token);
+        if (dbRefreshToken.refreshToken !== token || dbRefreshToken.refreshToken === 'null') {
+            return res.status(403).json({
                 message: 'Autentification needed',
-                details: dbRefreshToken,
+                details: null,
             });
         }
 
-        const newTokens = createTokens(userId, email);
-        await AuthService.updateById(userId, newTokens);
-
+        const newTokens = createTokens(userId);
+        await JwtServices.updateById(userId, { refreshToken: newTokens.refreshToken });
         return res.status(200).send(newTokens);
     } catch (error) {
         res.status(401).json({
@@ -117,9 +102,8 @@ async function deleteToken(req, res, next) {
         const token = req.headers.authorization;
 
         const { error, userId } = verifyUser(token);
-        console.log(userId);
         if (error) throw error;
-        const result = await AuthService.updateById(userId, { refreshToken: null });
+        const result = await JwtServices.updateById(userId, { refreshToken: null });
         return res.json(result);
     } catch (error) {
         res.status(401).json({
@@ -131,7 +115,7 @@ async function deleteToken(req, res, next) {
 }
 
 async function deleteUser(userId) {
-    const result = await AuthService.deleteById(userId);
+    const result = await JwtServices.deleteById(userId);
     return result;
 }
 
@@ -142,5 +126,4 @@ module.exports = {
     findToken,
     deleteToken,
     deleteUser,
-    getNewToken,
 };

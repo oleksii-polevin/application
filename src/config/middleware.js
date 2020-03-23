@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
-const csrf = require('csurf');
+// const csrf = require('csurf');
 
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
         // parse Cookie header and populate req.cookies with an object keyed by the cookie names.
         app.use(cookieParser());
         // csrf token for forms
-        app.use(csrf({ cookie: true }));
+        // app.use(csrf({ cookie: true }));
         // returns the compression middleware
         app.use(compression());
         // helps you secure your Express apps by setting various HTTP headers

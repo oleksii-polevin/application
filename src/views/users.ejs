@@ -17,7 +17,6 @@
             <td><%=item.fullName%></td>
             <td>
                 <form action="/v1/users/delete" method="POST">
-                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                     <input type="hidden" name="id" value="<%=item._id%>">
                     <button onclick="confirm('Are you sure?');">delete</button>
                 </form>

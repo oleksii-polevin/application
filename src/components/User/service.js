@@ -19,12 +19,9 @@ function findAll() {
  * @returns {Promise<UserModel>}
  */
 function findById(id) {
-    return UserModel.findById(id).exec();
+    return UserModel.findOne(id).exec();
 }
 
-function findByEmail(email) {
-    return UserModel.find({ email });
-}
 
 /**
  * @exports
@@ -51,6 +48,10 @@ function updateById(_id, newProfile) {
     return UserModel.updateOne({ _id }, newProfile).exec();
 }
 
+function findByEmail(email) {
+    return UserModel.find({ email });
+}
+
 /**
  * @exports
  * @method deleteById
@@ -58,15 +59,15 @@ function updateById(_id, newProfile) {
  * @summary delete a user from database
  * @returns {Promise<void>}
  */
-function deleteById(_id) {
-    return UserModel.deleteOne({ _id }).exec();
+function deleteById(userId) {
+    return UserModel.deleteOne({ _id: userId }).exec();
 }
 
 module.exports = {
     findAll,
     findById,
+    findByEmail,
     create,
     updateById,
     deleteById,
-    findByEmail,
 };

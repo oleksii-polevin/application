@@ -8,14 +8,6 @@ const AuthSchema = new Schema(
             trim: true,
             requred: true,
         },
-        email: {
-            type: String,
-            requred: true,
-        },
-        accessToken: {
-            type: String,
-            required: true,
-        },
         refreshToken: {
             type: String,
             required: true,

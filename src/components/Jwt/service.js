@@ -1,4 +1,4 @@
-const AuthModel = require('./model');
+const JwtModel = require('./model');
 
 /**
  * @exports
@@ -8,7 +8,7 @@ const AuthModel = require('./model');
  * @returns {Promise<UserModel>}
  */
 function create(profile) {
-    return AuthModel.create(profile);
+    return JwtModel.create(profile);
 }
 
 /**
@@ -20,16 +20,8 @@ function create(profile) {
  * @summary update a user's tokens
  * @returns {Promise<void>}
  */
-function updateById(userId, newTokens) {
-    return AuthModel.updateOne({ userId }, newTokens).exec();
-}
-
-function updateByEmail(email, newTokens) {
-    return AuthModel.updateOne({ email }, newTokens).exec();
-}
-
-function findByEmail(email) {
-    return AuthModel.findOne({ email });
+function updateById(userId, newToken) {
+    return JwtModel.updateOne({ userId }, newToken).exec();
 }
 
 /**
@@ -40,11 +32,11 @@ function findByEmail(email) {
  * @returns {Promise<void>}
  */
 function deleteById(userId) {
-    return AuthModel.deleteOne({ userId }).exec();
+    return JwtModel.deleteOne({ userId }).exec();
 }
 
 function findToken(userId) {
-    return AuthModel.findOne({ userId });
+    return JwtModel.findOne({ userId });
 }
 
 module.exports = {
@@ -52,6 +44,4 @@ module.exports = {
     updateById,
     deleteById,
     findToken,
-    updateByEmail,
-    findByEmail,
 };

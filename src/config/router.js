@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const UserRouter = require('../components/User/router');
-const AuthRouter = require('../components/Auth/router');
+const JwtRouter = require('../components/Jwt/router');
 
 module.exports = {
     /**
@@ -21,7 +21,7 @@ module.exports = {
          * @param {callback} middleware - Express middleware.
          */
         app.use('/v1/users', UserRouter);
-        app.use('/v1/auth', AuthRouter);
+        app.use('/v1/jwt', JwtRouter);
 
         // app.use(express.static(path.join(__dirname, '../', 'public')));
 

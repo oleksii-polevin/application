@@ -1,6 +1,5 @@
 <form class="updateUser" action="/v1/users/update" method="POST">
 <input type="text" placeholder="full name" name="fullName">
-<input type="hidden" name="_csrf" value="<%=csrfToken%>">
-<input type="hidden" name="accessToken" value=<%=accessToken%>>
+<input type="hidden" name="id" value="<%=userId%>">
 <button>update</button>
 </form>

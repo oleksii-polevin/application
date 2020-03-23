@@ -39,6 +39,19 @@ class UserValidation extends Validation {
     }
 
     /**
+     * @param {String} email
+     * @returns
+     * @memberof UserValidation
+     */
+    findByEmail(email) {
+        return this.Joi
+            .object({
+                email: this.Joi.string().email(),
+            })
+            .validate(email);
+    }
+
+    /**
      * @param {String} data.id - objectId
      * @param {String} data.fullName
      * @returns

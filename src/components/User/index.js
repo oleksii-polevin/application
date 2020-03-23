@@ -1,7 +1,7 @@
 const UserService = require('./service');
 const UserValidation = require('./validation');
 const ValidationError = require('../../error/ValidationError');
-const UserAuth = require('../Auth/auth.js');
+const JwtUser = require('../Jwt/jwt.js');
 
 
 /**
@@ -17,7 +17,6 @@ async function findAll(req, res, next) {
 
         res.render('index', {
             data: users,
-            csrfToken: req.csrfToken(),
         });
     } catch (error) {
         res.status(500).render('500', {
@@ -29,42 +28,6 @@ async function findAll(req, res, next) {
     }
 }
 
-async function findUser(req, res, next) {
-    try {
-        // the same validation scheme as used for creation
-        const { error } = UserValidation.create({
-            email: req.body.email,
-            fullName: req.body.fullName,
-        });
-
-        if (error) {
-            throw new ValidationError(error.details);
-        }
-
-        const result = await UserService.findByEmail(req.body.email);
-        const token = await UserAuth.getToken(result.id, req.body.email);
-        return res.json({
-            accessToken: token.accessToken,
-            refreshToken: token.refreshToken,
-        });
-        // return res.redirect('/v1/users');
-    } catch (error) {
-        if (error instanceof ValidationError) {
-            console.log('validation error');
-            return res.status(422).render('422', {
-                message: error.name,
-                details: error.message[0].message,
-            });
-        }
-        res.render('500', {
-            message: error.name,
-            details: error.message,
-        });
-
-        return next(error);
-    }
-}
-
 /**
  * @function
  * @param {express.Request} req
@@ -73,19 +36,16 @@ async function findUser(req, res, next) {
  * @returns {Promise < void >}
  */
 async function findById(req, res, next) {
-    const token = req.headers['x-access-token'] || req.headers.authorization;
-    const result = UserAuth.verifyUser(token);
-    if (typeof result.userId === 'undefined') {
-        res.status(401).json({ error: result.error });
-    }
+    const decodedToken = JwtUser.verifyUser(req.headers.authorization);
+    const { userId } = decodedToken;
     try {
-        const { error } = UserValidation.findById({ id: result.userId });
+        const { error } = UserValidation.findById({ id: userId });
 
         if (error) {
             throw new ValidationError(error);
         }
 
-        const user = await UserService.findById(result.userId);
+        const user = await UserService.findById({ _id: userId });
 
         return res.status(200).json({
             data: user,
@@ -107,6 +67,48 @@ async function findById(req, res, next) {
 }
 
 /**
+ * find user by email after logout
+ * @function
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns {Promise < void >}
+ */
+async function findUser(req, res, next) {
+    try {
+        const { error } = UserValidation.findByEmail({
+            email: req.body.email,
+        });
+
+        if (error) {
+            throw new ValidationError(error.details);
+        }
+
+        const result = await UserService.findByEmail(req.body.email);
+        const token = await JwtUser.getToken(result[0].id, false);
+        return res.json({
+            accessToken: token.accessToken,
+            refreshToken: token.refreshToken,
+        });
+    } catch (error) {
+        if (error instanceof ValidationError) {
+            console.log('validation error');
+            return res.status(422).render('422', {
+                message: error.name,
+                details: error.message[0].message,
+            });
+        }
+        res.render('500', {
+            message: error.name,
+            details: error.message,
+        });
+
+        return next(error);
+    }
+}
+
+
+/**
  * @function
  * @param {express.Request} req
  * @param {express.Response} res
@@ -125,13 +127,12 @@ async function create(req, res, next) {
         }
 
         const result = await UserService.create(req.body);
-        const token = await UserAuth.getToken(result.id, req.body.email);
+        const token = await JwtUser.getToken(result.id);
 
         return res.json({
             accessToken: token.accessToken,
             refreshToken: token.refreshToken,
         });
-        // return res.redirect('/v1/users');
     } catch (error) {
         if (error instanceof ValidationError) {
             console.log('validation error');
@@ -157,14 +158,11 @@ async function create(req, res, next) {
  * @returns {Promise<void>}
  */
 async function updateById(req, res, next) {
-    const token = req.headers['x-access-token'] || req.headers.authorization || req.body.accessToken;
-    const result = UserAuth.verifyUser(token);
-    if (typeof result.userId === 'undefined') {
-        res.status(401).json({ error: result.error });
-    }
+    const decodedToken = JwtUser.verifyUser(req.headers.authorization);
+    const { userId } = decodedToken;
     try {
         const { error } = UserValidation.updateById({
-            id: result.userId,
+            id: userId,
             fullName: req.body.fullName,
         });
 
@@ -172,10 +170,8 @@ async function updateById(req, res, next) {
             throw new ValidationError(error.details);
         }
 
-        await UserService.updateById(result.userId, { fullName: req.body.fullName });
-
-
-        return res.redirect('/v1/users');
+        const result = await UserService.updateById(userId, { fullName: req.body.fullName });
+        return res.json(result);
     } catch (error) {
         if (error instanceof ValidationError) {
             return res.status(422).render('422', {
@@ -201,16 +197,18 @@ async function updateById(req, res, next) {
  * @returns {Promise<void>}
  */
 async function deleteById(req, res, next) {
+    const decodedToken = JwtUser.verifyUser(req.headers.authorization);
+    const { userId } = decodedToken;
     try {
-        const { error } = UserValidation.deleteById({ id: req.body.id });
+        const { error } = UserValidation.deleteById({ id: userId });
 
         if (error) {
             throw new ValidationError(error.details);
         }
 
-        await UserService.deleteById({ _id: req.body.id });
-        await UserAuth.deleteUser(req.body.id);
-        return res.redirect('/v1/users');
+        const result = await UserService.deleteById(userId);
+        await JwtUser.deleteUser(userId);
+        return res.json(result);
     } catch (error) {
         if (error instanceof ValidationError) {
             return res.status(422).render('422', {
@@ -235,7 +233,7 @@ async function deleteById(req, res, next) {
  * @param {express.Response} res
  */
 function newUser(req, res) {
-    res.render('formCreateUser', { csrfToken: req.csrfToken() });
+    res.render('formCreateUser');
 }
 
 /**
@@ -246,17 +244,9 @@ function newUser(req, res) {
  */
 async function updateForm(req, res) {
     const { id } = req.params;
-    let token;
-    try {
-        token = await UserAuth.findToken(id);
-    } catch (error) {
-        console.error(error);
-    }
 
     res.render('formUpdateUser', {
         userId: id,
-        csrfToken: req.csrfToken(),
-        accessToken: token.accessToken,
     });
 }
 
