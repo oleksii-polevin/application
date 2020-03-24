@@ -141,10 +141,11 @@ async function create(req, res, next) {
                 details: error.message[0].message,
             });
         }
-        res.render('500', {
+        res.status(500).render('500', {
             message: error.name,
             details: error.message,
         });
+
 
         return next(error);
     }

@@ -17,6 +17,7 @@ describe('EXIST FILES', () => {
     it('project files', (done) => {
         expect(path.join(__dirname, '../../src/components/User')).to.be.a.path();
         expect(path.join(__dirname, '../../src/components/Jwt')).to.be.a.path();
+
         done();
     });
 });

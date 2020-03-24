@@ -11,16 +11,25 @@ describe('UserComponent -> service', () => {
     let id;
     let email;
     let fullName;
+    const testUser = {
+        email: 'mochatest@gmail.com',
+        fullName: 'mocha test',
+    };
+
     before(() => {
-        UserService.create({
-            email: 'mochatest@gmail.com',
-            fullName: 'mocha test',
-        }).then((result) => {
+        UserService.create(testUser).then((result) => {
             id = result.id;
             email = result.email;
             fullName = result.fullName;
         });
     });
+
+    it('UserComponent -> service -> create(duplicate -> catch MongoError)', () => {
+        UserService.create(testUser).then().catch((error) => {
+            expect(error.name).to.be.equal('MongoError');
+        });
+    });
+
 
     it('UserComponent -> service -> findAll', (done) => {
         UserService.findAll().then((result) => {
@@ -67,9 +76,10 @@ describe('UserComponent -> service', () => {
         });
     });
 
-    it('UserComponent -> service -> findById(negative after updating)', (done) => {
+    it('UserComponent -> service -> findById(test new fullName)', (done) => {
         UserService.findById(id).then((result) => {
             expect(result.fullName).to.not.be.equal(fullName);
+            expect(result.fullName).to.be.equal('mocha user');
 
             done();
         }).catch((error) => {
