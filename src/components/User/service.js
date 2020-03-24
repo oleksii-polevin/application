@@ -5,7 +5,7 @@ const UserModel = require('./model');
  * @method findAll
  * @param {}
  * @summary get list of all users
- * @returns Promise<UserModel[]>
+ * @returns {Promise<UserModel[]>}
  */
 function findAll() {
     return UserModel.find({}).exec();
@@ -18,8 +18,8 @@ function findAll() {
  * @summary get a user
  * @returns {Promise<UserModel>}
  */
-function findById(id) {
-    return UserModel.findOne(id).exec();
+function findById(userId) {
+    return UserModel.findOne({ _id: userId }).exec();
 }
 
 
@@ -40,16 +40,23 @@ function create(profile) {
  * @method updateById
  * @param {string} _id
  * @param {object} newProfile
- * @summary update a user's profile
+ * @summary update a user's profile via _id key
  * @returns {Promise<void>}
  */
 function updateById(_id, newProfile) {
-    console.log(newProfile);
     return UserModel.updateOne({ _id }, newProfile).exec();
 }
 
+/**
+ * Find a user by id and update his profile
+ * @exports
+ * @method findByEmail
+ * @param {string} email User's email
+ * @summary update a user's profile using email as a key
+ * @returns {Promise<void>}
+ */
 function findByEmail(email) {
-    return UserModel.find({ email });
+    return UserModel.findOne({ email });
 }
 
 /**
