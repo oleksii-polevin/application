@@ -1,5 +1,5 @@
 const {
-    describe, it, before, after,
+    describe, it, before,
 } = require('mocha');
 const chai = require('chai');
 const UserService = require('../../src/components/User/service');
@@ -87,7 +87,8 @@ describe('UserComponent -> service', () => {
         });
     });
 
-    after(() => {
-        UserService.deleteById(id);
+    it('UserComponent -> service -> deleteById', async () => {
+        const result = await UserService.deleteById(id);
+        expect(result.deletedCount).to.be.equal(1);
     });
 });
