@@ -1,11 +1,11 @@
 {
-    "name": "lesson2",
+    "name": "lesson5",
     "version": "0.0.1",
     "main": "./src/server/index.js",
     "keywords": [
         "lesson4"
     ],
-    "author": "",
+    "author": "Oleksii",
     "scripts": {
         "format": "prettier --config=.prettierrc.json --write '**/*.js' && eslint --fix '**/*.js'",
         "commit": "git-cz",
