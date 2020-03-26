@@ -36,6 +36,7 @@ describe('JwtComponent-> in order to obtain different token it is necessary to w
             .expect(200)
             .then(({ body }) => {
                 expect(body).to.have.property('refreshToken');
+                expect(body.refreshToken).to.not.equal(token.refreshToken);
 
                 done();
             });
@@ -55,7 +56,7 @@ describe('JwtComponent-> in order to obtain different token it is necessary to w
             });
     });
 
-    it('JwtComponent -> controller -> /v1/jwt/token (negative: try to get new token with old refresh after logout, got error insted)', (done) => {
+    it('JwtComponent -> controller -> /v1/jwt/token (negative: try to get new token with old refresh after logout -> get error)', (done) => {
         request(server)
             .get('/v1/jwt/token')
             .set('authorization', token.refreshToken)

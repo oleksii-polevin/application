@@ -24,7 +24,7 @@ describe('UserComponent -> service', () => {
         });
     });
 
-    it('UserComponent -> service -> create(duplicate -> catch MongoError)', () => {
+    it('UserComponent -> service -> create(duplicate -> get MongoError)', () => {
         UserService.create(testUser).then().catch((error) => {
             expect(error.name).to.be.equal('MongoError');
         });

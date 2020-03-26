@@ -67,23 +67,6 @@ describe('UserComponent -> controller', () => {
             });
     });
 
-    it('UserComponent -> controller -> /v1/users/user (find user -> attempt 2)', (done) => {
-        request(server)
-            .get('/v1/users/user')
-            .set('authorization', token.accessToken)
-            .expect('Content-Type', /json/)
-            .expect(200)
-            .then(({ body }) => {
-                const user = body.data;
-                expect(user).to.have.property('_id');
-                expect(user).to.have.property('email');
-                expect(user).to.have.property('fullName');
-                expect(user.email).to.be.equal(testUser.email);
-
-                done();
-            });
-    });
-
     it('UserComponent -> controller -> /v1/users/update', (done) => {
         request(server)
             .post('/v1/users/update')
