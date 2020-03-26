@@ -8,7 +8,7 @@ const server = require('../../src/server/server');
 
 const { expect } = chai;
 
-describe('JwtComponent', () => {
+describe('JwtComponent-> in order to obtain different token it is necessary to wait at least 1second ', () => {
     let token;
     const testUser = {
         email: 'JwtTest@gmail.com',
@@ -24,7 +24,6 @@ describe('JwtComponent', () => {
             });
     });
 
-    // eslint-disable-next-line func-names
     beforeEach((done) => {
         setTimeout(done, 1200);
     });
@@ -53,6 +52,23 @@ describe('JwtComponent', () => {
                 expect(body.nModified).to.be.equal(1);
 
                 done();
+            });
+    });
+
+    it('JwtComponent -> controller -> /v1/jwt/token (negative: try to get new token with old refresh after logout, got error insted)', (done) => {
+        request(server)
+            .get('/v1/jwt/token')
+            .set('authorization', token.refreshToken)
+            .expect('Content-Type', /json/)
+            .expect(403)
+            .then((result) => {
+                const { message } = result.body;
+                expect(message).to.be.equal('Autentification needed');
+
+                done();
+            })
+            .catch((error) => {
+                done(error);
             });
     });
 

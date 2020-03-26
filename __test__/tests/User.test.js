@@ -28,11 +28,6 @@ describe('UserComponent -> controller', () => {
             });
     });
 
-    // // eslint-disable-next-line func-names
-    // beforeEach((done) => {
-    //     setTimeout(done, 500);
-    // });
-
     it('UserComponent -> controller -> /v1/users/ (negative test: try to create incorrect user)', () => {
         request(server)
             .post('/v1/users')

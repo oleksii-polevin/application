@@ -20,10 +20,10 @@ function createTokens(userId) {
     };
 }
 /**
- * Obtain new tokens
+ * Obtains new tokens for both new users and re-logined users
  * @param {String} userId
  * @param {String} email
- *@param {Boolean} newUser
+ * @param {Boolean} newUser false for re-logined users
  */
 async function getToken(userId, newUser = true) {
     const { accessToken, refreshToken } = createTokens(userId);
@@ -74,6 +74,7 @@ async function findToken(userId) {
 
 /**
  * Update user's tokens
+ * Each user has own refresh token, stored in database along with user's Id
  * @param {Express.request} req
  * @param {Express.response} res
  * @param {Express.NextFunction} next
@@ -96,6 +97,7 @@ async function updateToken(req, res, next) {
         const newTokens = createTokens(userId);
         const result = await JwtServices.updateById(userId,
             { refreshToken: newTokens.refreshToken });
+
         if (result.nModified === 1) {
             return res.status(200).json(newTokens);
         } return res.status(500).json({ message: 'Something went wrong' });
@@ -109,7 +111,7 @@ async function updateToken(req, res, next) {
 }
 
 /**
- * Delete user's tokens
+ * Deletes user's tokens
  * @param {Express.request} req
  * @param {Express.response} res
  * @param {Express.NextFunction} next
@@ -132,7 +134,7 @@ async function deleteToken(req, res, next) {
 }
 
 /**
- * Delete user from database
+ * Deletes user from database
  * @param {String} userId
  */
 async function deleteUser(userId) {
