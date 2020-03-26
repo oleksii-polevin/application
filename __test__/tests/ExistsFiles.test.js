@@ -17,6 +17,9 @@ describe('EXIST FILES', () => {
     it('project files', (done) => {
         expect(path.join(__dirname, '../../src/components/User')).to.be.a.path();
         expect(path.join(__dirname, '../../src/components/Jwt')).to.be.a.path();
+        expect(path.join(__dirname, '../../.editorconfig')).to.be.a.path();
+        expect(path.join(__dirname, '../../package.json')).to.be.a.path();
+        expect(path.join(__dirname, '../../README.MD')).to.be.a.path();
 
         done();
     });

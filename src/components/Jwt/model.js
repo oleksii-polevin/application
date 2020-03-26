@@ -5,7 +5,6 @@ const AuthSchema = new Schema(
     {
         userId: {
             type: String,
-            trim: true,
             requred: true,
         },
         refreshToken: {

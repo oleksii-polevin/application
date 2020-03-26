@@ -12,7 +12,7 @@
         "start": "node src/server/index.js",
         "emails": "node lesson_4/grabbingEmails.js",
         "screenshots": "node lesson_4/screenshots.js",
-        "test": "npx mocha ./__test__ --exit "
+        "test": "npx mocha --timeout 5000 ./__test__ --exit "
     },
     "husky": {
         "hooks": {

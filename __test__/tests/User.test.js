@@ -1,4 +1,6 @@
-const { describe, it, before } = require('mocha');
+const {
+    describe, it, before,
+} = require('mocha');
 const request = require('supertest');
 const chai = require('chai');
 
@@ -12,6 +14,11 @@ describe('UserComponent -> controller', () => {
         email: 'userTest@gmail.com',
         fullName: 'router test',
     };
+    const incorrectUser = {
+        email: 'incorrectEmail.com',
+        fullName: 'wrong user',
+    };
+
     before(() => {
         request(server)
             .post('/v1/users')
@@ -21,8 +28,20 @@ describe('UserComponent -> controller', () => {
             });
     });
 
+    // // eslint-disable-next-line func-names
+    // beforeEach((done) => {
+    //     setTimeout(done, 500);
+    // });
 
-    it('UserComponent -> controller -> /v1/users/', (done) => {
+    it('UserComponent -> controller -> /v1/users/ (negative test: try to create incorrect user)', () => {
+        request(server)
+            .post('/v1/users')
+            .send(incorrectUser)
+            .expect(422);
+    });
+
+
+    it('UserComponent -> controller -> /v1/users/ (find all)', (done) => {
         request(server)
             .get('/v1/users')
             .set('Accept', 'application/json')
@@ -37,6 +56,23 @@ describe('UserComponent -> controller', () => {
     });
 
     it('UserComponent -> controller -> /v1/users/user (find user)', (done) => {
+        request(server)
+            .get('/v1/users/user')
+            .set('authorization', token.accessToken)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(({ body }) => {
+                const user = body.data;
+                expect(user).to.have.property('_id');
+                expect(user).to.have.property('email');
+                expect(user).to.have.property('fullName');
+                expect(user.email).to.be.equal(testUser.email);
+
+                done();
+            });
+    });
+
+    it('UserComponent -> controller -> /v1/users/user (find user -> attempt 2)', (done) => {
         request(server)
             .get('/v1/users/user')
             .set('authorization', token.accessToken)
@@ -79,5 +115,12 @@ describe('UserComponent -> controller', () => {
 
                 done();
             });
+    });
+
+    it('UserComponent -> controller -> /v1/users/user (negative test: try to find user after deleting)', () => {
+        request(server)
+            .get('/v1/users/user')
+            .set('authorization', token.accessToken)
+            .expect(404);
     });
 });

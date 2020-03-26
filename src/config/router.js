@@ -21,6 +21,15 @@ module.exports = {
          * @param {callback} middleware - Express middleware.
          */
         app.use('/v1/users', UserRouter);
+
+        /**
+         * Forwards any requests to the /v1/jwt URI to JwtRouter.
+         * @name /v1/users
+         * @function
+         * @inner
+         * @param {string} path - Express path
+         * @param {callback} middleware - Express middleware.
+         */
         app.use('/v1/jwt', JwtRouter);
 
         // app.use(express.static(path.join(__dirname, '../', 'public')));

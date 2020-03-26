@@ -12,3 +12,8 @@ require('./tests/UserService.test.js');
 // * CONTROLLERS (ROUTES)
 // **************************
 require('./tests/User.test');
+
+// ***************************
+// * JWT (ROUTES)
+// ****************************
+require('./tests/JwtService.test');

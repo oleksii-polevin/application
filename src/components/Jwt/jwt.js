@@ -6,7 +6,6 @@ const JwtServices = require('./service');
  * Creates jwt tokens for users
  * @function
  * @param {String} userId User's _id from users database
- * @param {String} email  User's email
  */
 function createTokens(userId) {
     const accessToken = jwt.sign({
@@ -83,22 +82,23 @@ async function updateToken(req, res, next) {
     try {
         const token = req.headers.authorization;
 
-        const { error, userId } = verifyUser(token);
+        const { error, userId } = await verifyUser(token);
         if (error) throw error;
 
         const dbRefreshToken = await findToken(userId);
-        console.log(dbRefreshToken);
-        console.log(token);
+
         if (dbRefreshToken.refreshToken !== token || dbRefreshToken.refreshToken === 'null') {
             return res.status(403).json({
                 message: 'Autentification needed',
                 details: null,
             });
         }
-
         const newTokens = createTokens(userId);
-        await JwtServices.updateById(userId, { refreshToken: newTokens.refreshToken });
-        return res.status(200).send(newTokens);
+        const result = await JwtServices.updateById(userId,
+            { refreshToken: newTokens.refreshToken });
+        if (result.nModified === 1) {
+            return res.status(200).json(newTokens);
+        } return res.status(500).json({ message: 'Something went wrong' });
     } catch (error) {
         res.status(401).json({
             message: error.name,

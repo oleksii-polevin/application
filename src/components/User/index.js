@@ -46,6 +46,9 @@ async function findById(req, res, next) {
         }
 
         const user = await UserService.findById({ _id: userId });
+        if (!user) {
+            return res.status(404);
+        }
 
         return res.status(200).json({
             data: user,
