@@ -32,7 +32,7 @@
         "dropbox-v2-api": "2.4.12",
         "ejs": "3.0.1",
         "eslint-config-airbnb": "18.0.1",
-        "express": "4.16.2",
+        "express": "4.17.3",
         "fs": "0.0.1-security",
         "helmet": "3.9.0",
         "jsonwebtoken": "8.5.1",
